@@ -1,0 +1,28 @@
+CLog
+====
+
+	Description:
+		Class for logging.
+
+	License:
+		GNU AGPL
+
+	Author:
+		Aleksi Räsänen, 2011
+		aleksi.rasanen@runosydan.net
+
+	Example:
+
+		require 'CLog/CLog.php';
+
+		$log = new CLog();
+		$log->addLineNumbers( true );
+
+		$log->add( 'This is the first line' );
+		$log->add( 'And this is second line' );
+		$log->add( 'Third line here!' );
+
+		$log->writeLogToFile( 'log.txt', 'text' );
+		$log->writeLogToFile( 'log.html', 'html' );
+
+		print_r( $log->getLog( 'raw' ) );
