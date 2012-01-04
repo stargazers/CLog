@@ -175,6 +175,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		// ************************************************** 
+		//  clearLog
+		/*!
+			@brief Clears a log
+		*/
+		// ************************************************** 
+		public function clearLog()
+		{
+			$this->logMessages = array();
+		}
+
+		// ************************************************** 
 		//  formatLogToText
 		/*!
 			@brief Format log data to text
