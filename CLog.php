@@ -286,7 +286,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				$regexp = '/' . $regexp . '/';
 				preg_match( $regexp, $message, $matches );
 				
-				if( is_array( $matches ) )
+				if( is_array( $matches ) && ! empty( $matches ) )
 					return $type;
 			}
 
