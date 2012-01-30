@@ -2,7 +2,7 @@
 
 /* 
 CLog - Class for logging.
-Copyright (C) 2011 Aleksi Räsänen <aleksi.rasanen@runosydan.net>
+Copyright (C) 2011-2012 Aleksi Räsänen <aleksi.rasanen@runosydan.net>
 
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU Affero General Public License as
@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		@author Aleksi Räsänen
 		@email aleksi.rasanen@runosydan.net
 		@license GNU AGPL
-		@copyright Aleksi Räsänen, 2011
+		@copyright Aleksi Räsänen, 2011-2012
 	*/
 	// ************************************************** 
 	class CLog
