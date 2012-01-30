@@ -18,11 +18,23 @@ CLog
 		$log = new CLog();
 		$log->addLineNumbers( true );
 
+		$log->add( 'In method: Testing...' );
 		$log->add( 'This is the first line' );
 		$log->add( 'And this is second line' );
 		$log->add( 'Third line here!' );
+		$log->add( 'In method: This is method!' );
+
+		$log->setMessageType( 'in_method', '^In method' );
 
 		$log->writeLogToFile( 'log.txt', 'text' );
 		$log->writeLogToFile( 'log.html', 'html' );
 
 		print_r( $log->getLog( 'raw' ) );
+
+	In above example we have defined a message type 'in_method'
+	and all lines which fits to regular expression ^In method
+	will get that message type (in_method). When we generate a
+	HTML log from that we have those messages with different 
+	CSS class. CSS class name would be log_message_in_method
+	so we can no define different messagetypes and we can get
+	different CSS classes for those messages.

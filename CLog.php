@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		private $dateFormat;
 		private $logMessages;
 		private $addLineNumbers;
+		private $messageTypes;
 
 		// ************************************************** 
 		//  __construct
@@ -48,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$this->timeAndMessageSeparator = '  ---  ';
 			$this->dateFormat = 'Y-m-d H:i:s';
 			$this->logMessages = array();
+			$this->messageTypes = array();
 			$this->addLineNumbers = false;
 		}
 
@@ -186,6 +188,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		// ************************************************** 
+		//  setMessageType
+		/*!
+			@brief Set different message types with regular expressions
+			@param $type Whatever name, for example "info", "error" etc.
+			@param $regexp Regular expression how these files should
+			  be found.
+		*/
+		// ************************************************** 
+		public function setMessageType( $type, $regexp )
+		{
+			$this->messageTypes[$type] = $regexp;
+		}
+
+		// ************************************************** 
 		//  formatLogToText
 		/*!
 			@brief Format log data to text
@@ -238,7 +254,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$str .= '</td>';
 				}
 
-				$str .= '<td class="log_message">';
+				$type = $this->checkMessageTypes( $logRow['message'] );
+
+				if( $type != '' )
+					$type = '_' . $type;
+
+				$str .= '<td class="log_message' . $type . '">';
 				$str .= $logRow['message'];
 				$str .= '</td>';
 				$str .= '</tr>' . "\n";
@@ -246,6 +267,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 			$str .= '</table>' . "\n";
 			return $str;
+		}
+
+		// ************************************************** 
+		//  checkMessageTypes
+		/*!
+			@brief Checks message type from messageTypes array
+			@param $message Message to check
+			@return If any regexp in $messageTypes matches,
+			  returns the first one which matches. If no matches
+			  are found, returns empty string.
+		*/
+		// ************************************************** 
+		private function checkMessageTypes( $message )
+		{
+			foreach( $this->messageTypes as $type => $regexp )
+			{
+				$regexp = '/' . $regexp . '/';
+				preg_match( $regexp, $message, $matches );
+				
+				if( is_array( $matches ) )
+					return $type;
+			}
+
+			return '';
 		}
 	}
  
