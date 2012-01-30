@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		private $logMessages;
 		private $addLineNumbers;
 		private $messageTypes;
+		private $showTypeInMessage;
 
 		// ************************************************** 
 		//  __construct
@@ -51,6 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$this->logMessages = array();
 			$this->messageTypes = array();
 			$this->addLineNumbers = false;
+			$this->showTypeInMessage = false;
 		}
 
 		// ************************************************** 
@@ -66,6 +68,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		public function addLineNumbers( $bool )
 		{
 			$this->addLineNumbers = $bool;
+		}
+
+		// ************************************************** 
+		//  showTypeInMessage
+		/*!
+			@brief Defines if we should show defined types
+			  in messages. For example, if we have defined regexp
+			  like '^In method: ' and we define showTypeInMessage
+			  to false, we do not echo text "In method" to those
+			  messages which are that type.
+			@param $bool True or false. By default it is false.
+		*/
+		// ************************************************** 
+		public function showTypeInMessage( $bool )
+		{
+			$this->showTypeInMessage = $bool;
 		}
 
 		// ************************************************** 
@@ -254,19 +272,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$str .= '</td>';
 				}
 
-				$type = $this->checkMessageTypes( $logRow['message'] );
+				$msg = $logRow['message'];
+				$type = $this->checkMessageTypes( $msg );
 
 				if( $type != '' )
+				{
+					$msg = $this->removeMessageTypeIfNeeded( $msg, $type );
 					$type = '_' . $type;
+				}
 
 				$str .= '<td class="log_message' . $type . '">';
-				$str .= $logRow['message'];
+				$str .= $msg;
 				$str .= '</td>';
 				$str .= '</tr>' . "\n";
 			}
 
 			$str .= '</table>' . "\n";
 			return $str;
+		}
+
+		// ************************************************** 
+		//  removeMessageTypeIfNeeded
+		/*!
+			@brief Removes a message type text from message if
+			  variable $showTypeInMessage is false.
+			@param $message Message to handle
+			@param $type Message type 
+			@return String
+		*/
+		// ************************************************** 
+		private function removeMessageTypeIfNeeded( $message, $type )
+		{
+			if( $this->showTypeInMessage )
+				return $message;
+			
+			$whatToRemove = $this->messageTypes[$type];
+			$whatToRemove = '/' . $whatToRemove . '/';
+
+			$message = preg_replace( $whatToRemove, '', $message );
+			return $message;
 		}
 
 		// ************************************************** 
