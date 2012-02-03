@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		private $addLineNumbers;
 		private $messageTypes;
 		private $showTypeInMessage;
+		private $logFileWriteMethod;
 
 		// ************************************************** 
 		//  __construct
@@ -53,6 +54,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$this->messageTypes = array();
 			$this->addLineNumbers = false;
 			$this->showTypeInMessage = false;
+			
+			$this->setLogFileWriteMethod( 'write' );
+		}
+
+		// ************************************************** 
+		//  setLogFileWriteMethod
+		/*!
+			@brief Defines a log writing method when we want
+			  to write a log to the file.
+			@param $type Type of opening a file. This can be
+			  'write' or 'append'. If other $type is given,
+			  we use 'write' which is also a default value.
+		*/
+		// ************************************************** 
+		public function setLogFileWriteMethod( $type )
+		{
+			switch( $type )
+			{
+				case 'append':
+					$this->logFileWriteMethod = 'a';
+					break;
+
+				default:
+				case 'write':
+					$this->logFileWriteMethod = 'w';
+					break;
+			}
 		}
 
 		// ************************************************** 
@@ -98,7 +126,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		// ************************************************** 
 		public function writeLogToFile( $filename, $format )
 		{
-			$fh = @fopen( $filename, 'w' );
+			$fh = @fopen( $filename, $this->logFileWriteMethod );
 
 			if(! $fh )
 				return false;
@@ -106,8 +134,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			if( $format == 'raw' )
 				$format = 'text';
 
-			fwrite( $fh, $this->getLog( $format ) );
-			fclose( $fh );
+			@fwrite( $fh, $this->getLog( $format ) );
+			@fclose( $fh );
 
 			return true;
 		}
