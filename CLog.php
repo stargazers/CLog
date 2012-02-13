@@ -209,6 +209,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$log = '';
 			$possible = array( 'raw', 'text', 'html' );
 
+			$format = strtolower( $format );
+
 			if(! in_array( $format, $possible ) )
 				$format = 'raw';
 
