@@ -38,6 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		private $messageTypes;
 		private $showTypeInMessage;
 		private $logFileWriteMethod;
+		private $fileWhatWeLog;
+		private $showFilenameInLog;
 
 		// ************************************************** 
 		//  __construct
@@ -54,8 +56,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$this->messageTypes = array();
 			$this->addLineNumbers = false;
 			$this->showTypeInMessage = false;
-			
+			$this->fileWhatWeLog = 'unknown';
+			$this->showFilenameInLog = true;
 			$this->setLogFileWriteMethod( 'write' );
+		}
+
+		// ************************************************** 
+		//  setFileWhatWeLog
+		/*!
+			@brief Sets what file we are currently logging.
+			  This feature is used so we can use same logging
+			  class in mulitple source files and still know
+			  which file gave those log messages.
+			@param $filename File what we are logging
+			@return Nothing
+		*/
+		// ************************************************** 
+		public function setFileWhatWeLog( $filename )
+		{
+			$this->fileWhatWeLog = $filename;
+		}
+
+		// ************************************************** 
+		//  getFileWhatWeLog
+		/*!
+			@brief Gets current filename what is used when
+			  we store logging informations.
+			@return Filename. If this is not set using setFileWhatWeLog,
+			  then we have default value 'unknown'.
+		*/
+		// ************************************************** 
+		public function getFileWhatWeLog()
+		{
+			return $this->fileWhatWeLog;
 		}
 
 		// ************************************************** 
@@ -112,6 +145,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		public function showTypeInMessage( $bool )
 		{
 			$this->showTypeInMessage = $bool;
+		}
+
+		// ************************************************** 
+		//  showFilenameInLog
+		/*!
+			@brief Defines if we should show filenames in log message.
+			@param $bool True or false. By default this is true.
+			@return Nothing
+		*/
+		// ************************************************** 
+		public function showFilenameInLog( $bool )
+		{
+			$this->showFilenameInLog = $bool;
 		}
 
 		// ************************************************** 
@@ -191,7 +237,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		{
 			$this->logMessages[] = array(
 				'timestamp' => time(),
-				'message' => $msg
+				'message' => $msg,
+				'filename' => $this->fileWhatWeLog
 			);
 		}
 
@@ -228,6 +275,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		//  clearLog
 		/*!
 			@brief Clears a log
+			@return Nothing
 		*/
 		// ************************************************** 
 		public function clearLog()
@@ -242,6 +290,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			@param $type Whatever name, for example "info", "error" etc.
 			@param $regexp Regular expression how these files should
 			  be found.
+			@return Nothing
 		*/
 		// ************************************************** 
 		public function setMessageType( $type, $regexp )
@@ -273,6 +322,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$str .= date( $this->dateFormat, $logRow['timestamp'] );
 					$str .= $this->timeAndMessageSeparator;
 				}
+
+				if( $this->showFilenameInLog )
+					$str .= $logRow['filename'] . ' : ';
 
 				$str .= $logRow['message']. "\n";
 			}
@@ -309,6 +361,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				{
 					$msg = $this->removeMessageTypeIfNeeded( $msg, $type );
 					$type = '_' . $type;
+				}
+
+				if( $this->showFilenameInLog )
+				{
+					$str .=  '<td class="log_filename">';
+					$str .= $logRow['filename'];
+					$str .= '</td>';
 				}
 
 				$str .= '<td class="log_message' . $type . '">';

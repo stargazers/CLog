@@ -17,6 +17,7 @@ CLog
 
 		$log = new CLog();
 		$log->addLineNumbers( true );
+		$log->setFileWhatWeLog( 'test.php' );
 
 		$log->add( 'In method: Testing...' );
 		$log->add( 'This is the first line' );
@@ -38,3 +39,29 @@ CLog
 	CSS class. CSS class name would be log_message_in_method
 	so we can no define different messagetypes and we can get
 	different CSS classes for those messages.
+
+	Example 2:
+		require 'CLog/CLog.php';
+
+		$log = new CLog();
+		$log->setFileWhatWeLog( 'test.php' );
+		$log->add( 'Hello...' );
+		$log->add( '...World!');
+		echo $log->getLog( 'text' );
+		$log->clearLog();
+
+		$log->showFilenameInLog( false );
+		$log->add( 'In this message...' );
+		$log->add( '...and this...');
+		$log->add( 'there is no filename in log output!' );
+		echo $log->getLog( 'text' );
+
+ 	Above example would create this kind of log (of course date and 
+	timestamps will be different depending on date and time...):
+
+		2012-02-15 19:18:09  ---  test.php : Hello...
+		2012-02-15 19:18:09  ---  test.php : ...World!
+		2012-02-15 19:18:09  ---  In this message...
+		2012-02-15 19:18:09  ---  ...and this...
+		2012-02-15 19:18:09  ---  there is no filename in log output!
+
