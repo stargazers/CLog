@@ -39,7 +39,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		private $showTypeInMessage;
 		private $logFileWriteMethod;
 		private $fileWhatWeLog;
+		private $functionWeLog;
 		private $showFilenameInLog;
+		private $showFunctionInLog;
 
 		// ************************************************** 
 		//  __construct
@@ -57,8 +59,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$this->addLineNumbers = false;
 			$this->showTypeInMessage = false;
 			$this->fileWhatWeLog = 'unknown';
+			$this->functionWeLog = 'unknown';
 			$this->showFilenameInLog = true;
+			$this->showFunctionInLog = true;
 			$this->setLogFileWriteMethod( 'write' );
+		}
+
+		// ************************************************** 
+		//  setFunctionWeLog
+		/*!
+			@brief Sets a function where this log message belongs.
+			  This feature is used so we can easily track which 
+			  method/function added log message. This method must
+			  be called every time when logging method changes!
+			@param $functionName Name of a funcion
+			@return Nothing
+		*/
+		// ************************************************** 
+		public function setFunctionWeLog( $functionName )
+		{
+			$this->functionWeLog = $functionName;
+		}
+
+		// ************************************************** 
+		//  getFunctionWeLog
+		/*!
+			@brief Gets current function name where we set logs messages.
+			@return String. If setFunctionWeLog is not called, we
+			  return default value which is 'unknown'.
+		*/
+		// ************************************************** 
+		public function getFunctionWeLog()
+		{
+			return $this->functionWeLog;
 		}
 
 		// ************************************************** 
@@ -161,6 +194,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 		}
 
 		// ************************************************** 
+		//  showFunctionInLog
+		/*!
+			@brief Defines if we should show function names in log messages 
+			@param $bool True or false. By default this is true.
+			@return Nothing
+		*/
+		// ************************************************** 
+		public function showFunctionInLog( $bool )
+		{
+			$this->showFunctionInLog = $bool;
+		}
+
+		// ************************************************** 
 		//  writeLogToFile
 		/*!
 			@brief Write generated log to file
@@ -238,7 +284,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 			$this->logMessages[] = array(
 				'timestamp' => time(),
 				'message' => $msg,
-				'filename' => $this->fileWhatWeLog
+				'filename' => $this->fileWhatWeLog,
+				'function' => $this->functionWeLog
 			);
 		}
 
@@ -323,8 +370,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 					$str .= $this->timeAndMessageSeparator;
 				}
 
-				if( $this->showFilenameInLog )
+				if( $this->showFilenameInLog && $this->showFunctionInLog )
+				{
+					$str .= $logRow['filename'] . '/' 
+						. $logRow['function'] . ' : ';
+				}
+				else if( $this->showFilenameInLog )
+				{
 					$str .= $logRow['filename'] . ' : ';
+				}
+				else if( $this->showFunctionInLog )
+				{
+					$str .= ' (' . $logRow['function'] . ') : ';
+				}
 
 				$str .= $logRow['message']. "\n";
 			}
@@ -367,6 +425,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 				{
 					$str .=  '<td class="log_filename">';
 					$str .= $logRow['filename'];
+					$str .= '</td>';
+				}
+
+				if( $this->showFunctionInLog )
+				{
+					$str .= '<td class="log_function">';
+					$str .= $logRow['function'];
 					$str .= '</td>';
 				}
 
